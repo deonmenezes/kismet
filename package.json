@@ -1,0 +1,50 @@
+{
+  "name": "agent-dates",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "prebuild": "node --env-file-if-exists=.env.local scripts/check-schema.mjs",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --no-warnings --test src/lib/contacts.test.mjs src/lib/mcp.test.mjs src/lib/village.test.mjs src/lib/secret.test.mjs src/lib/world.test.mjs src/lib/tokens.test.mjs src/lib/waitlist.test.mjs src/lib/photos-dm.test.mjs src/lib/records.test.mjs src/lib/text/text.test.mjs src/lib/daily.test.mjs src/lib/village-events.test.mjs src/lib/agent-box/box-program.test.mjs src/lib/net.test.mjs src/lib/drop.test.mjs src/lib/sign-in-help.test.mjs src/lib/about.test.mjs src/lib/match-agents.test.mjs src/lib/google-avatar.test.mjs src/lib/training.test.mjs src/lib/demo.test.mjs src/lib/board.test.mjs src/lib/drop-claims.test.mjs src/lib/safety-routes.test.mjs src/lib/public-limits.test.mjs src/lib/dates-cap.test.mjs src/lib/decide.test.mjs src/lib/digest.test.mjs src/lib/village-mcp.test.mjs src/lib/village-demo.test.mjs src/lib/edge-city.test.mjs src/lib/edge-pool.test.mjs src/lib/check-schema.test.mjs src/lib/report-history.test.mjs src/lib/unheld.test.mjs src/lib/patch-telegram.test.mjs src/lib/nul-input.test.mjs src/lib/poll.test.mjs src/lib/links.test.mjs src/lib/icons.test.mjs src/lib/deleted-note.test.mjs src/lib/deletion-jobs.test.mjs src/lib/csp.test.mjs src/lib/admin-login.test.mjs src/lib/photo-limits.test.mjs src/lib/contact-check.test.mjs src/lib/contact-backfill.test.mjs src/lib/contact-doors.test.mjs src/lib/pages-copy.test.mjs src/lib/first-message.test.mjs src/lib/easy-signup.test.mjs src/lib/photo-nudge.test.mjs",
+    "test:village": "node --test --test-concurrency=1 scripts/village-api.test.mjs"
+  },
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "^3.0.71",
+    "@daytonaio/sdk": "^0.225.0",
+    "@neondatabase/auth": "^0.7.0-beta",
+    "@neondatabase/serverless": "^1.2.0",
+    "@vercel/blob": "^2.8.2",
+    "@worldcoin/idkit": "4.4.0",
+    "@worldcoin/idkit-core": "4.4.0",
+    "ai": "^7.0.143",
+    "next": "16.4.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sharp": "^0.35.5",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.12",
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.2",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "overrides": {
+    "zod": "$zod",
+    "better-auth": "1.7.7",
+    "@better-auth/core": "1.7.7",
+    "@better-auth/oauth-provider": "1.7.7",
+    "@better-auth/passkey": "1.7.7",
+    "@better-auth/telemetry": "1.7.7"
+  }
+}

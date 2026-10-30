@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "crons": [
+    { "path": "/api/text/cron", "schedule": "0 3 * * *" },
+    { "path": "/api/text/drop", "schedule": "30 13 * * 3" },
+    { "path": "/api/text/drop-extra", "schedule": "0 5 * * 6" },
+    { "path": "/api/text/unheld", "schedule": "0 6 * * 6" }
+  ]
+}

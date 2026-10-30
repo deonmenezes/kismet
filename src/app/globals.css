@@ -1,0 +1,672 @@
+@import "tailwindcss";
+
+/* ---- Kismet colour grading (Deon's palette, 2026-10-28) -------------------------------------------------------------
+   Four colours: coral #ED6B83, blush #FBE5F5, lavender #A86FF7, indigo #6D5FF6. Flat fills only: no gradients, glows,
+   blur or grain anywhere. Roles:
+     blush     the light canvas
+     coral     the primary action, with ink text (white on coral is only 3.0:1)
+     indigo    selected states, my messages, focus rings; a deeper indigo for links
+     lavender  tags and highlights (a soft lavender fill with deep violet text)
+   Every text pairing is WCAG AA (4.5:1+); ratios sit beside each token (design/kismet-palette.md has the full table).
+   The dark set is the same roles on a deep indigo-ink canvas, used when the device is in dark mode. */
+:root {
+  --blush: #fbe5f5;
+  --coral: #ed6b83;
+  --lavender: #a86ff7;
+  --indigo: #6d5ff6;
+
+  --bg: #fbe5f5;            /* canvas: blush */
+  --bg-2: #f6d8ec;          /* a sunken fill, hover; ink 13.2:1, muted 4.9:1 */
+  --card: #ffffff;          /* raised surfaces */
+  --side: #fdf2fa;          /* the chats sidebar; muted 6:1 */
+  --bubble: #ffffff;        /* their messages */
+  --ink: #1e1530;           /* text: 14.6:1 on blush, 17.4:1 on white */
+  --muted: #665878;         /* secondary text: 5.5:1 on blush, 6.5:1 on white */
+  --line: #ecccdf;          /* hairlines between surfaces (decorative) */
+  --line-strong: #8e7aa2;   /* field and control borders: 3.9:1 on white, 3.2:1 on blush */
+  --accent: #ed6b83;        /* coral fill */
+  --accent-hover: #e45c76;
+  --on-accent: #1e1530;     /* ink on coral 5.8:1 (on hover 5.1:1) */
+  --accent-ink: #b23250;    /* coral as text: 5.1:1 on blush, 6.1:1 on white */
+  --select: #6d5ff6;        /* indigo fill: selected chips, my bubbles */
+  --on-select: #ffffff;     /* white on indigo 4.55:1 */
+  --link: #4f41d9;          /* indigo as text: 5.7:1 on blush, 6.8:1 on white */
+  --tag: #efe3fe;           /* lavender, softened */
+  --tag-ink: #5b2bb0;       /* 7.1:1 on the tag fill */
+  --danger: #b4233f;        /* destructive: white on it 6.5:1; as text 5.4:1 on blush */
+  --on-danger: #ffffff;
+  --sea: #0f766e;           /* verified / yes: 4.6:1 on blush */
+  --focus: #6d5ff6;         /* focus ring: 3.8:1 on blush */
+  --scrim: rgb(30 21 48 / 0.5);
+  --shadow-1: 0 1px 2px rgb(30 21 48 / 0.06);
+  --shadow-2: 0 16px 40px -20px rgb(30 21 48 / 0.35);
+}
+/* ::backdrop only inherits custom properties from the page in recent browsers (Safari 17.4+): give it its own. */
+::backdrop { --scrim: rgb(30 21 48 / 0.5); }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14101c;          /* deep indigo-ink canvas */
+    --bg-2: #282236;
+    --card: #1f1a2b;
+    --side: #18131f;
+    --bubble: #282236;
+    --ink: #f8eef6;         /* 16.6:1 on the canvas, 15:1 on cards */
+    --muted: #b0a4c0;       /* 8:1 on the canvas, 6.5:1 on bubbles */
+    --line: #342d45;
+    --line-strong: #7a6b92; /* 3.5:1 on cards */
+    --accent: #ed6b83;
+    --accent-hover: #f28ca0;
+    --on-accent: #1e1530;
+    --accent-ink: #f2849a;  /* 6.9:1 on cards, 6.2:1 on bubbles */
+    --select: #6d5ff6;
+    --on-select: #ffffff;
+    --link: #bfa0fa;        /* 7.8:1 on cards */
+    --tag: #2e2547;
+    --tag-ink: #cdb6fb;     /* 7.9:1 */
+    --danger: #ff8fa3;      /* a fill with ink text 8.1:1; as text 8.7:1 */
+    --on-danger: #1e1530;
+    --sea: #5fd3c6;
+    --focus: #a88bfa;       /* 6.9:1 on the canvas */
+    --scrim: rgb(5 3 10 / 0.7);
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3);
+    --shadow-2: 0 16px 40px -20px rgb(0 0 0 / 0.7);
+  }
+  ::backdrop { --scrim: rgb(5 3 10 / 0.7); }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-select: var(--select);
+  --color-on-select: var(--on-select);
+  --color-link: var(--link);
+  --color-tag: var(--tag);
+  --color-tag-ink: var(--tag-ink);
+  --color-danger: var(--danger);
+  --color-on-danger: var(--on-danger);
+  --color-sea: var(--sea);
+  --color-coral: var(--coral);
+  --color-blush: var(--blush);
+  --color-lavender: var(--lavender);
+  --color-indigo: var(--indigo);
+  --font-sans: var(--font-geist-sans);
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  color-scheme: light dark;
+}
+
+/* One canvas colour on html and body, edge to edge: no band of another colour under, behind or around any page
+   (iOS overscroll, the strip behind the toolbars, a webview whose 100dvh comes out short). theme-color matches it
+   (src/lib/theme.ts). */
+html, body { background: var(--bg); }
+body {
+  color: var(--ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* One focus ring everywhere: crisp, indigo, offset from the control. In the base layer, so a control that draws its
+   own focus (fields, the composer) can turn it off. */
+@layer base {
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+}
+
+/* Display headings in the brand serif (Fraunces italic, src/lib/fonts.ts). */
+.k-serif {
+  font-family: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-synthesis: none; /* the one static face (src/lib/fonts.ts): never a faux bold or italic */
+  letter-spacing: -.015em;
+}
+
+/* An eyebrow above a heading: small caps in coral ink. */
+.k-kicker { font-size: .75rem; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink); }
+
+/* The base controls sit in the components layer, so a utility on the element (min-h-11, px-3, text-sm) wins over them.
+   Sizes: buttons 48px tall (44px with min-h-11), chips 44px. Radius: pills for actions, 16px fields, 24px cards. */
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0 1.5rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-weight: 650;
+    transition: transform 150ms ease, background-color 150ms ease, border-color 150ms ease;
+    user-select: none;
+  }
+  .btn:active { transform: scale(0.97); }
+  /* Disabled: a flat sunken fill with muted text (4.9:1), not a faded coral. */
+  .btn:disabled { color: var(--muted); background: var(--bg-2); border-color: var(--line); pointer-events: none; }
+  .btn-primary { color: var(--on-accent); background: var(--accent); }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-ghost { color: var(--ink); background: var(--card); border-color: var(--line-strong); }
+  .btn-ghost:hover { background: var(--bg-2); }
+  .btn-danger { color: var(--on-danger); background: var(--danger); }
+  .btn-danger:hover { background: color-mix(in srgb, var(--danger) 88%, #000); }
+
+  .chip {
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: var(--card);
+    color: var(--ink);
+    font-weight: 550;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  }
+  .chip:hover { border-color: var(--select); }
+  .chip[aria-pressed="true"] {
+    color: var(--on-select);
+    border-color: var(--select);
+    background: var(--select);
+  }
+
+  .field {
+    width: 100%;
+    border-radius: 1rem;
+    border: 1px solid var(--line-strong);
+    background: var(--card);
+    color: var(--ink);
+    padding: 0.9rem 1rem;
+    font-size: 1.05rem;
+    outline: none;
+  }
+  .field::placeholder { color: var(--muted); }
+  .field:focus, .field:focus-visible { border-color: var(--focus); box-shadow: 0 0 0 1px var(--focus); outline: none; }
+
+}
+
+/* Outside the layer on purpose: 16px+ keeps iOS from zooming in, whatever text size the element asks for. */
+.field { font-size: 1.05rem; }
+/* Native checkboxes and switches in the selected colour (base layer: an accent-* utility still wins). */
+@layer base {
+  input[type="checkbox"] { accent-color: var(--select); }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.rise { animation: rise 380ms cubic-bezier(.2,.8,.2,1) both; }
+
+@keyframes pulse-ring {
+  0% { transform: scale(.9); opacity: .8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+.pulse-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 2px solid var(--select);
+  animation: pulse-ring 1.4s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .pulse-ring::after { animation: none; }
+}
+
+/* ---- The Kismet wordmark (public/brand/kismet-neon.png) as a mask, filled flat in coral ink. ---- */
+.neon-sign {
+  position: relative;
+  display: block;
+}
+.neon-tube {
+  position: absolute;
+  inset: 0;
+  background: var(--accent-ink);
+  -webkit-mask: url(/brand/kismet-neon.png) center / contain no-repeat;
+  mask: url(/brand/kismet-neon.png) center / contain no-repeat;
+}
+
+/* ---- Page heights: 100vh first for browsers without dynamic viewport units. ---- */
+.k-shell { height: 100vh; height: 100dvh; }
+.k-page { min-height: 100vh; min-height: 100dvh; }
+/* The chat pages run edge to edge (viewport-fit=cover, src/lib/theme.ts): the shell keeps its content out of the
+   notch, the home indicator and the rounded corners; its own background fills them. */
+.k-shell {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.kchat .k-side { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); padding-left: env(safe-area-inset-left); }
+
+/* The chat pages never scroll as a page: only their own panes do. The shell is the containing block of everything
+   positioned inside it (sr-only labels in a scrolled list would otherwise sit at their place in the list, far below
+   the window, and stretch the page into an endless scroll). */
+html:has(.kchat), html:has(.kchat) body { overflow: hidden; overscroll-behavior: none; }
+.k-shell { position: relative; overflow: hidden; }
+
+/* ---- The chat shell: the same tokens as the plain pages (blush in light mode, indigo-ink in dark), so the site and
+   the chat read as one app and html/body/shell are one colour edge to edge. The --k-* names stay for the markup. */
+.kchat {
+  --k-bg: var(--bg);
+  --k-side: var(--side);
+  --k-raise: var(--card);
+  --k-bubble: var(--bubble);
+  --k-line: var(--line);
+  --k-text: var(--ink);
+  --k-muted: var(--muted);
+  --k-accent: var(--accent);
+  --k-accent-text: var(--accent-ink);
+  background: var(--k-bg);
+  color: var(--k-text);
+}
+.kchat .k-side { background: var(--k-side); border-right: 1px solid var(--k-line); box-shadow: var(--shadow-2); animation: k-slide 200ms cubic-bezier(.2,.8,.2,1) backwards; } /* at rest on screen even if the slide stalls (iOS) */
+.kchat .k-scrim { background: transparent; } /* catches a tap outside the menu; the chat stays undimmed */
+.kchat .k-side.k-docked { box-shadow: none; animation: none; }
+.kchat .k-header { border-bottom: 1px solid var(--k-line); background: var(--k-bg); }
+/* Match chat agents: their bubbles, and two agents merging into one when the chat opens. */
+.kchat .k-agent { background: var(--tag); color: var(--ink); border: 1px solid color-mix(in srgb, var(--lavender) 35%, transparent); }
+.kchat .k-pop { animation: k-check-pop 260ms cubic-bezier(.2,.8,.2,1) both; }
+.k-merge { position: relative; display: block; margin: 0 auto; }
+.k-merge-lg { width: 160px; height: 80px; }
+.k-merge-sm { width: 76px; height: 36px; }
+.k-merge .k-orb { position: absolute; top: 50%; display: grid; place-items: center; border-radius: 9999px; font-weight: 650; }
+.k-merge-lg .k-orb { width: 56px; height: 56px; margin-top: -28px; font-size: 1.25rem; }
+.k-merge-sm .k-orb { width: 28px; height: 28px; margin-top: -14px; font-size: .8rem; }
+/* A ring in the page colour keeps the two orbs apart where they overlap (a solid edge, not a glow). */
+.k-merge .k-orb-a { left: 0; background: var(--accent); color: var(--on-accent); box-shadow: 0 0 0 3px var(--k-bg); animation: k-merge-a 1.4s cubic-bezier(.2,.8,.2,1) both; }
+.k-merge .k-orb-b { right: 0; background: var(--select); color: var(--on-select); box-shadow: 0 0 0 3px var(--k-bg); animation: k-merge-b 1.4s cubic-bezier(.2,.8,.2,1) both; }
+dialog .k-merge .k-orb { box-shadow: 0 0 0 3px var(--k-raise); }
+/* The overshoot stops short of covering the first orb's initial (both stay readable, also mid-animation). */
+.k-merge-lg { --k-in: 30px; --k-over: 32px; }
+.k-merge-sm { --k-in: 14px; --k-over: 15px; }
+@keyframes k-merge-a { 0% { transform: translateX(0); } 70% { transform: translateX(var(--k-over)); } 100% { transform: translateX(var(--k-in)); } }
+@keyframes k-merge-b { 0% { transform: translateX(0); } 70% { transform: translateX(calc(-1 * var(--k-over))); } 100% { transform: translateX(calc(-1 * var(--k-in))); } }
+@media (prefers-reduced-motion: reduce) {
+  .k-merge .k-orb-a { animation: none; transform: translateX(var(--k-in)); }
+  .k-merge .k-orb-b { animation: none; transform: translateX(calc(-1 * var(--k-in))); }
+  .kchat .k-pop { animation: none; }
+}
+.kchat .k-raise { background: var(--k-raise); }
+.kchat .k-bubble, .kchat .k-them { background: var(--k-bubble); color: var(--ink); }
+.kchat .k-them { border: 1px solid var(--k-line); }
+.kchat .k-mine { background: var(--select); color: var(--on-select); } /* my messages: indigo, white text 4.55:1 */
+.kchat .k-card { background: var(--k-raise); border: 1px solid var(--k-line); box-shadow: var(--shadow-1); }
+.kchat .k-tag { background: var(--tag); color: var(--tag-ink); }
+.kchat .k-line { border-color: var(--k-line); }
+.kchat .k-muted { color: var(--k-muted); }
+.kchat .k-item { border-radius: 0.75rem; transition: background-color 120ms ease; }
+.kchat .k-item:hover { background: var(--bg-2); }
+.kchat .k-item[aria-current="page"] { position: relative; background: var(--bg-2); }
+.kchat .k-item[aria-current="page"]::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px; border-radius: 3px; background: var(--select); }
+.kchat .k-icon { color: var(--k-text); transition: background-color 120ms ease; }
+.kchat .k-icon:hover { background: var(--bg-2); }
+.kchat .k-quiet { border: 1px solid var(--line-strong); transition: background-color 120ms ease; }
+.kchat .k-quiet:hover { background: var(--bg-2); }
+.kchat .k-quiet[aria-pressed="true"] { border-color: var(--select); color: var(--link); }
+.kchat .k-composer { background: var(--k-raise); border: 1px solid var(--line-strong); box-shadow: var(--shadow-1); }
+.kchat .k-composer:focus-within { border-color: var(--focus); box-shadow: 0 0 0 1px var(--focus); }
+.kchat .k-chip { min-height: 2.75rem; border: 1px solid var(--line-strong); background: var(--k-raise); color: var(--k-text); border-radius: 999px; transition: border-color 120ms ease, background-color 120ms ease; }
+.kchat .k-chip:hover { border-color: var(--select); }
+.kchat .k-chip:disabled { color: var(--k-muted); background: var(--bg-2); border-color: var(--line); }
+.kchat .k-send { background: var(--k-accent); color: var(--on-accent); transition: background-color 120ms ease; }
+.kchat .k-send:hover { background: var(--accent-hover); }
+.kchat .k-send:disabled { background: var(--bg-2); color: var(--k-muted); }
+.kchat .k-more summary { list-style: none; }
+.kchat .k-more summary::-webkit-details-marker { display: none; }
+.kchat .k-more summary::after { content: " ›" / ""; display: inline-block; margin-left: 0.25em; transition: transform 120ms ease; }
+.kchat .k-more[open] summary::after { transform: rotate(90deg); }
+.kchat .k-chip.k-muted { color: var(--k-muted); }
+.kchat textarea:focus-visible { outline: none; } /* the composer around it shows focus */
+.kchat h2[tabindex="-1"]:focus-visible { outline: none; } /* a heading focused for screen readers, not a control */
+.kchat .k-live { animation: k-live 1.6s ease-in-out infinite; }
+@keyframes k-slide { from { transform: translateX(-100%); } to { transform: none; } }
+@keyframes k-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes k-live { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+.k-dialog::backdrop { background: var(--scrim); }
+.k-dialog { margin: auto; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 1.5rem; padding: 0; max-width: min(28rem, calc(100vw - 2rem)); width: 100%; box-shadow: var(--shadow-2); }
+.k-dialog[open] { animation: rise 260ms cubic-bezier(.2,.8,.2,1) backwards; }
+
+/* The mic while it listens: a crisp coral ring that widens and fades. */
+@keyframes mic-pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent); } 100% { box-shadow: 0 0 0 18px transparent; } }
+.mic-live { animation: mic-pulse 1.2s ease-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mic-live, .k-dialog[open], .kchat .k-side, .kchat .k-live { animation: none; }
+}
+
+/* ---- The sign-in sheet --------------------------------------------------------------------------------------------
+   A bottom sheet on phones, a card from 640px; flat blush (indigo-ink in dark mode); the Kismet mark and a coral
+   stroke drawn as it opens; contents rise in one by one (--i). Pure CSS and inline SVG.
+   Every entrance fills `backwards` only: the resting state is each element's own style (sheet on screen, contents
+   visible, strokes drawn), never an animation's last frame, so with no animation at all everything still shows. An
+   entrance that stalls on its first frame (iOS WebKit, Low Power Mode) is finished by Modal after 2 s
+   (src/components/chat/modal.tsx), which lands it at that same resting state. */
+.k-dialog.k-sheet {
+  --s-bg: var(--bg);
+  --s-max: calc(100vh - 2rem);
+  text-wrap: pretty;
+  overflow: hidden;
+  isolation: isolate;
+  max-width: min(27rem, calc(100vw - 2rem));
+  max-height: var(--s-max);
+  background: var(--s-bg);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow: var(--shadow-2);
+}
+/* In dark mode the sheet sits one step above the canvas, so its edge reads without a glow. */
+@media (prefers-color-scheme: dark) { .k-dialog.k-sheet { --s-bg: var(--card); } }
+.k-dialog.k-sheet[open] { display: flex; flex-direction: column; animation: k-pop-in 620ms cubic-bezier(.2,.9,.25,1) backwards; }
+.k-dialog.k-sheet[open][data-closing] { animation: k-pop-out 200ms cubic-bezier(.4,0,1,1) both; }
+.k-sheet::backdrop { background: var(--scrim); animation: k-fade 360ms ease backwards; }
+.k-sheet[data-closing]::backdrop { animation: k-fade-out 200ms ease both; }
+.k-sheet-body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 26px 24px calc(22px + env(safe-area-inset-bottom));
+}
+.k-sheet-body:focus, .k-sheet-body:focus-visible { outline: none; }
+.k-grabber { display: none; }
+/* A child of the dialog, not of the scrolling body, so it never scrolls away (QA2 N-M4); its own backing keeps it legible
+   over contents scrolling under it. */
+.k-sheet-close {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  right: 12px;
+  background: color-mix(in srgb, var(--s-bg) 86%, transparent);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  color: var(--muted);
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+.k-sheet-close:hover { background: var(--bg-2); color: var(--ink); }
+.k-sheet-close:active { transform: scale(.92); }
+.k-sheet-close:disabled { opacity: .35; cursor: default; }
+@media (max-width: 639px) {
+  .k-dialog.k-sheet {
+    --s-max: calc(100vh - 12px - env(safe-area-inset-top));
+    width: 100%;
+    max-width: 100%;
+    margin: auto 0 0;
+    border-bottom: 0;
+    border-radius: 28px 28px 0 0;
+    /* The second shadow is a solid block of the sheet's own colour below the screen edge, so the spring overshoot
+       never shows a gap. */
+    box-shadow: 0 -12px 32px -20px rgb(30 21 48 / .35), 0 80px 0 0 var(--s-bg);
+  }
+  .k-dialog.k-sheet[open] { animation: k-sheet-up 640ms cubic-bezier(.2,.9,.25,1) backwards; }
+  .k-dialog.k-sheet[open][data-closing] { animation: k-sheet-down 200ms cubic-bezier(.4,0,1,1) both; }
+  .k-grabber { display: block; width: 40px; height: 5px; margin: -14px auto 12px; border-radius: 3px; background: var(--line-strong); opacity: .5; }
+  .k-sheet-body { padding-top: 22px; }
+}
+/* The small viewport (browser toolbars shown): the sheet always fits the visible screen, also in Chrome and Safari on
+   iOS, whose dvh can count space under their toolbars; what doesn't fit scrolls inside .k-sheet-body. */
+@supports (height: 100svh) {
+  .k-dialog.k-sheet { --s-max: calc(100svh - 2rem); }
+  @media (max-width: 639px) { .k-dialog.k-sheet { --s-max: calc(100svh - 12px - env(safe-area-inset-top)); } }
+}
+@keyframes k-pop-in {
+  0% { opacity: 0; transform: translateY(26px) scale(.94); }
+  55% { opacity: 1; transform: translateY(-4px) scale(1.012); }
+  78% { transform: translateY(1px) scale(.998); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes k-pop-out { to { opacity: 0; transform: translateY(14px) scale(.965); } }
+@keyframes k-sheet-up {
+  0% { transform: translateY(100%); }
+  60% { transform: translateY(-12px); }
+  82% { transform: translateY(3px); }
+  100% { transform: none; }
+}
+@keyframes k-sheet-down { to { transform: translateY(100%); } }
+@keyframes k-fade-out { to { opacity: 0; } }
+
+/* Heading: the mark, an eyebrow, a Fraunces italic headline with a coral last word. */
+.k-head { position: relative; margin-bottom: 24px; padding-right: 36px; }
+.k-mark { display: block; width: 44px; height: 44px; margin-bottom: 16px; overflow: visible; }
+.k-mark .k-mark-a { stroke: var(--ink); }
+.k-mark .k-mark-b { stroke: var(--accent); }
+.k-mark .k-mark-spark { fill: var(--select); }
+.k-mark path[pathLength] { stroke-dasharray: 1; animation: k-draw 1.15s cubic-bezier(.6,.05,.25,1) .1s backwards; }
+.k-mark g path:nth-child(2) { animation-delay: .3s; }
+.k-mark-spark { transform-box: fill-box; transform-origin: center; animation: k-spark .55s cubic-bezier(.2,1.6,.4,1) 1.05s backwards, k-twinkle 3.4s ease-in-out 1.8s infinite; }
+@keyframes k-draw { from { stroke-dashoffset: 1; } } /* drawn from nothing; at rest (and with no animation) fully drawn */
+@keyframes k-spark { from { opacity: 0; transform: scale(0) rotate(-60deg); } to { opacity: 1; transform: none; } }
+@keyframes k-twinkle { 0%, 100% { opacity: 1; transform: none; } 50% { opacity: .65; transform: scale(.86) rotate(12deg); } }
+.k-eyebrow { font-size: .72rem; font-weight: 650; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.k-display {
+  margin-top: 6px;
+  font-family: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-synthesis: none; /* the one static face (src/lib/fonts.ts): never a faux bold or italic */
+  font-size: clamp(2.05rem, 9.2vw, 2.6rem);
+  line-height: 1.04;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.k-swash {
+  position: relative;
+  display: inline-block;
+  padding-right: .08em;
+  white-space: nowrap;
+  color: var(--accent-ink);
+}
+.k-ink { position: absolute; left: -3%; bottom: -.2em; width: 104%; height: .34em; overflow: visible; color: var(--accent); }
+.k-ink path { stroke-dasharray: 1; animation: k-draw .9s cubic-bezier(.65,0,.35,1) .55s backwards; }
+
+/* Entrances. */
+.k-in { animation: k-rise 640ms cubic-bezier(.2,.9,.25,1) backwards; animation-delay: calc(var(--i, 0) * 60ms + 160ms); }
+.k-step { animation: k-step-in 460ms cubic-bezier(.2,.9,.25,1) backwards; }
+@keyframes k-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes k-step-in { from { opacity: 0; transform: translateX(22px); } to { opacity: 1; transform: none; } }
+
+/* What they typed, the page's notice, the in-app browser note. */
+.k-quote { position: relative; margin: 0; padding: .85rem 1rem .85rem 2.4rem; border-radius: 1rem; background: var(--card); border: 1px solid var(--line); }
+.k-quote::before { content: "\201C"; position: absolute; left: .6rem; top: .05rem; font-family: var(--font-fraunces), Georgia, serif; font-style: italic; font-synthesis: none; font-size: 3rem; line-height: 1; color: var(--accent); }
+.k-quote blockquote { font-family: var(--font-fraunces), Georgia, serif; font-style: italic; font-synthesis: none; font-size: 1.15rem; line-height: 1.35; color: var(--ink); }
+.k-quote figcaption { margin-top: .3rem; font-size: .82rem; color: var(--muted); }
+.k-note { border-radius: 1rem; padding: .75rem .95rem; font-size: .875rem; line-height: 1.45; background: var(--card); border: 1px solid var(--line); }
+.k-inapp { border-radius: 1rem; padding: .85rem 1rem; font-size: .92rem; line-height: 1.45; background: var(--tag); border: 1px solid color-mix(in srgb, var(--lavender) 45%, transparent); }
+
+/* Controls: 52px tall, 44px+ targets throughout. */
+.k-google, .k-primary, .k-ghost {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .65rem;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0 1.25rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 650;
+  overflow: hidden;
+  user-select: none;
+  transition: transform 180ms cubic-bezier(.3,.7,.4,1.6), opacity 200ms ease, background-color 200ms ease;
+}
+.k-google:active, .k-primary:active, .k-ghost:active, .k-pill:active { transform: scale(.965); transition-duration: 90ms; }
+.k-google { background: var(--card); color: var(--ink); border-color: var(--line-strong); }
+.k-google:hover { background: var(--bg-2); }
+.k-google .k-spinner { color: var(--accent-ink); }
+.k-primary { color: var(--on-accent); background: var(--accent); }
+.k-primary:hover { background: var(--accent-hover); }
+.k-ghost { color: var(--ink); background: transparent; border-color: var(--line-strong); }
+.k-ghost:hover { background: var(--bg-2); }
+.k-google:disabled, .k-primary:disabled, .k-ghost:disabled, .k-link:disabled { cursor: default; }
+.k-google:disabled:not([aria-busy="true"]), .k-ghost:disabled { opacity: .5; }
+.k-primary:disabled:not([aria-busy="true"]) { color: var(--muted); background: var(--bg-2); }
+.k-spinner { flex-shrink: 0; width: 1.15rem; height: 1.15rem; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: k-spin .7s linear infinite; }
+@keyframes k-spin { to { transform: rotate(360deg); } }
+.k-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  font-size: .85rem;
+  font-weight: 600;
+  transition: background-color 160ms ease, transform 180ms cubic-bezier(.3,.7,.4,1.6);
+}
+.k-pill:hover { background: var(--bg-2); }
+.k-link { min-height: 44px; padding: 0 .25rem; color: var(--link); font-weight: 550; text-decoration: underline; text-underline-offset: 3px; transition: color 160ms ease; }
+.k-link:hover { color: var(--ink); }
+.k-link:disabled { color: var(--muted); text-decoration: none; }
+.k-or { display: flex; align-items: center; gap: .9rem; font-family: var(--font-fraunces), Georgia, serif; font-style: italic; font-synthesis: none; font-size: 1.05rem; color: var(--muted); }
+.k-or span { flex: 1; height: 1px; background: var(--line); }
+
+/* Fields: a crisp indigo ring follows whichever field has focus. */
+.k-ring { border-radius: 1rem; transition: box-shadow 200ms ease; }
+.k-ring:focus-within { box-shadow: 0 0 0 2px var(--focus); }
+.k-input {
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0 1rem;
+  border-radius: 1rem;
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 1.05rem;
+  outline: none;
+  transition: border-color 200ms ease;
+}
+.k-input.text-sm { font-size: 1rem; } /* 16px+ keeps iOS from zooming in */
+.k-input::placeholder { color: var(--muted); }
+.k-input:focus, .k-input:focus-visible { border-color: transparent; outline: none; }
+
+/* The six code boxes. */
+.k-code { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .5rem; }
+.k-code-box {
+  min-width: 0;
+  height: 3.7rem;
+  border-radius: .95rem;
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  color: var(--ink);
+  caret-color: var(--focus);
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 220ms ease, transform 200ms cubic-bezier(.3,.7,.4,1.6), background-color 200ms ease;
+}
+.k-code-box:not([value=""]) { border-color: var(--ink); }
+.k-code-box:focus, .k-code-box:focus-visible { outline: none; border-color: var(--focus); box-shadow: 0 0 0 1px var(--focus); transform: translateY(-2px); }
+.k-code-box:disabled { opacity: .6; }
+.k-shake { animation: k-shake 440ms cubic-bezier(.36,.07,.19,.97) both; }
+.k-shake .k-code-box { animation: k-bad 1.4s ease both; }
+@keyframes k-shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-8px); }
+  40%, 60% { transform: translateX(8px); }
+}
+@keyframes k-bad { from { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, var(--card)); } }
+.k-error { margin-top: 12px; text-align: center; font-size: .875rem; font-weight: 600; color: var(--danger); animation: k-rise 300ms ease backwards; }
+
+/* The private-link drawer. */
+.k-drawer summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  min-height: 44px;
+  margin-top: 8px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: .9rem;
+  font-weight: 550;
+  cursor: pointer;
+  list-style: none;
+  transition: color 160ms ease;
+}
+.k-drawer summary:hover { color: var(--ink); }
+.k-drawer summary::-webkit-details-marker { display: none; }
+.k-drawer summary::after { content: ""; width: .42em; height: .42em; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform 220ms ease; }
+.k-drawer[open] summary::after { transform: translateY(2px) rotate(225deg); }
+.k-drawer[open] form { animation: k-rise 360ms cubic-bezier(.2,.9,.25,1) backwards; }
+.k-signin > p:last-child { margin-top: 14px; }
+
+/* Signed in. */
+.k-done { display: flex; flex-direction: column; align-items: center; gap: .8rem; padding: .25rem 0 1rem; }
+.k-check { width: 88px; height: 88px; overflow: visible; animation: k-check-pop 600ms cubic-bezier(.2,1.5,.4,1) backwards; }
+@keyframes k-check-pop { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+.k-check circle { fill: var(--card); stroke: var(--accent); stroke-width: 3; stroke-dasharray: 1; transform-box: fill-box; transform-origin: center; transform: rotate(-90deg); animation: k-draw .6s cubic-bezier(.65,0,.35,1) backwards; }
+.k-check path { fill: none; stroke: var(--ink); stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; animation: k-draw .42s cubic-bezier(.65,0,.35,1) .45s backwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .k-dialog.k-sheet[open], .k-dialog.k-sheet[open][data-closing], .k-sheet::backdrop, .k-sheet[data-closing]::backdrop, .k-in, .k-step,
+  .k-mark path[pathLength], .k-mark-spark, .k-ink path, .k-check, .k-check circle, .k-check path, .k-shake, .k-shake .k-code-box, .k-error,
+  .k-drawer[open] form { animation: none !important; }
+  .k-spinner { animation-duration: 1.6s; } /* the loading cue stays, slower */
+  .k-code-box:focus, .k-google:active, .k-primary:active, .k-ghost:active, .k-pill:active, .k-sheet-close:active { transform: none; }
+}
+
+/* ---- The sign-in page (/sign-in: phones and every iOS browser, components/sign-in-page.tsx) ----------------------------
+   The sheet's contents in normal document flow: no dialog, nothing fixed, absolute or transformed at rest, no viewport
+   units placing anything, so it lands where the page starts whatever the browser counts as its viewport (iOS 26 can
+   place a top-layer dialog against the large viewport, WebKit bug 300965). The page scrolls like any other. No
+   entrance at all, so nothing waits on an animation that may stall (iOS, Low Power Mode): every field, the mark and the
+   stroke under the headline are at rest, drawn, on the first paint. The spark still twinkles. */
+.k-signin-page {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  background: var(--bg);
+  color: var(--ink);
+  text-wrap: pretty;
+}
+.k-signin-bar { display: flex; align-items: center; padding: 6px 8px 0; }
+.k-signin-back {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  min-height: 44px;
+  padding: 0 14px 0 8px;
+  border-radius: 999px;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.k-signin-back:hover { background: var(--bg-2); color: var(--ink); }
+.k-signin-back:disabled { opacity: .35; cursor: default; }
+.k-signin-main { max-width: 27rem; margin: 0 auto; padding: 0 24px 32px; }
+.k-signin-page .k-head { padding-right: 0; margin-bottom: 20px; }
+.k-signin-page .k-mark { margin-bottom: 12px; }
+.k-signin-page .k-in, .k-signin-page .k-step, .k-signin-page .k-error, .k-signin-page .k-drawer[open] form,
+.k-signin-page .k-mark path[pathLength], .k-signin-page .k-ink path { animation: none; }
+.k-signin-page .k-mark-spark { animation: k-twinkle 3.4s ease-in-out 1.8s infinite; }
+/* A short phone (360x640, 375x667, 390x664): with their words quoted, "Email me a sign-in code" still ends above the fold
+   (QA7: it ended at 644 of 640). A smaller mark, less space under the heading and around the quote, and the quote kept to
+   two lines (it is a reminder: the chat gets every word). */
+@media (max-width: 639px) and (max-height: 700px) {
+  .k-signin-page .k-mark { width: 36px; height: 36px; margin-bottom: 8px; }
+  .k-signin-page .k-head { margin-bottom: 14px; }
+  .k-signin-page .k-quote { padding-top: .6rem; padding-bottom: .6rem; }
+  .k-signin-page .k-quote blockquote { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+}
+/* A card on a wider screen (an iPad, or /sign-in opened on a desktop). */
+@media (min-width: 640px) {
+  .k-signin-main { margin: 24px auto 48px; padding: 30px 28px 26px; border: 1px solid var(--line); border-radius: 28px; background: var(--bg); box-shadow: var(--shadow-2); }
+}
+@media (min-width: 640px) and (prefers-color-scheme: dark) { .k-signin-main { background: var(--card); } }
